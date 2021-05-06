@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <node pkg="brain_control" type="brain_control_interface_gen3.py" name="brain_control_interface" output="screen">
+    <param name="scale_vel" value="1.0" />
+    <param name="scale_step" value="1.0" />
+  </node>
+
+<!--   <node pkg="brain_control" type="aruco_detect_client.py" name="aruco_detect_client" output="screen">
+
+  </node> -->
+<!--   <node pkg="brain_control" type="brain_control_cmd.py" name="brain_control_cmd" output="screen">
+  </node> -->
+
+</launch>

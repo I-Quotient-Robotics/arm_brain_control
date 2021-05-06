@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="log_type" default="screen"/>
+
+  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> -->
+
+  <include file="$(find kortex_driver)/launch/test.launch"/>
+
+  <!-- Aruco detect -->
+  <node pkg="aruco_ros" type="marker_publisher" name="aruco_marker_publisher">
+    <param name="image_is_rectified" value="True"/>
+    <param name="marker_size"        value="0.06"/>
+    <param name="reference_frame"    value="camera_color_frame"/>
+    <param name="camera_frame"       value="camera_color_frame"/>
+    <remap from="/camera_info" to="/camera/color/camera_info" />
+    <remap from="/image" to="/camera/color/image_raw" />
+  </node>
+</launch>

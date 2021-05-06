@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="log_type" default="screen"/>
+  
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find kinova_description)/urdf/j2n6s300_realsense.xacro'" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
+  <!-- Jaco -->
+  <node name="j2n6s300_driver" pkg="kinova_driver" type="kinova_arm_driver" output="$(arg log_type)" cwd="node" args="j2n6s300">
+    <param name="robot_name" value="j2n6s300" />   
+    <param name="robot_type" value="j2n6s300" />
+    <!-- <rosparam file="$(find caster_man_bringup)/config/kinova_arm.yaml" command="load" /> -->
+    <remap from="j2n6s300_driver/out/joint_state" to="joint_states"/>
+  </node>
+
+  <!-- <include file="$(find j2n6s300_moveit_config)/launch/j2n6s300_demo.launch"/> -->
+
+  <!-- Realsence -->
+  <include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">
+    <arg name="tf_prefix"             value="camera"/>
+    <arg name="initial_reset"         value="false"/>
+    <arg name="enable_sync"           value="true"/>
+    <arg name="align_depth"           value="true"/>
+    <arg name="enable_pointcloud"     value="true"/>
+  </include>
+
+  <!-- Aruco detect -->
+  <node pkg="aruco_ros" type="marker_publisher" name="aruco_marker_publisher">
+    <param name="image_is_rectified" value="True"/>
+    <param name="marker_size"        value="0.03"/>
+    <param name="reference_frame"    value="camera_color_optical_frame"/>
+    <param name="camera_frame"       value="camera_color_optical_frame"/>
+    <remap from="/camera_info" to="/color/camera_info" />
+    <remap from="/image" to="/color/image_raw" />
+  </node>
+
+    <!-- Aruco detect -->
+  <node pkg="mir100_jaco7_app" type="marker_detect_node" name="marker_detect_node">
+  </node>
+
+  <!-- Aruco detect TF-->
+  <node pkg="mir100_jaco7_app" type="vision_grasp_server" name="vision_grasp_server">
+  </node>
+
+  <!-- velocity control -->
+  <node name="kinova_hand_follow" pkg="kinova_hand_follow" type="kinova_hand_follow_node" respawn="false" output="screen">
+  </node>
+
+
+</launch>
